@@ -1,6 +1,6 @@
 defmodule LogApp.Ingress.Router do
   @moduledoc """
-  Plug.Router for the HTTP ingress server.
+  Lightweight HTTP router for the ingress server.
   Handles POST /logs requests containing log entries.
   """
 
@@ -84,8 +84,8 @@ defmodule LogApp.Ingress do
   @moduledoc """
   HTTP Ingress server for receiving logs from external systems.
   
-  Listens on a separate port using Plug.Cowboy and accepts POST requests to /logs
-  containing log entries in JSON format.
+  Lightweight implementation using Plug.Router with Cowboy.
+  Accepts POST requests to /logs containing log entries in JSON format.
   """
 
   require Logger
@@ -103,7 +103,7 @@ defmodule LogApp.Ingress do
   def start_link(opts) do
     port = Keyword.get(opts, :port, 4001)
 
-    Logger.info("Starting Ingress server on port #{port}")
+    Logger.info("Starting ingress server on port #{port}")
 
     {:ok, _pid} =
       Plug.Cowboy.http(LogApp.Ingress.Router, [], ip: {127, 0, 0, 1}, port: port)

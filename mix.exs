@@ -66,6 +66,7 @@ defmodule LogApp.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
+      {:cowboy, "~> 2.14"},
       {:plug_cowboy, "~> 2.7"}
     ]
   end
