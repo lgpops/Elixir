@@ -44,10 +44,9 @@ defmodule LogApp.Logs do
 
   def list_workflow_ids do
     from(l in Log,
-      distinct: true,
       select: l.workflow_id,
-      order_by: [desc: max(l.inserted_at)],
       group_by: l.workflow_id,
+      order_by: [desc: max(l.inserted_at)],
       limit: 100
     )
     |> Repo.all()
