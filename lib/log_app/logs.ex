@@ -62,4 +62,3 @@ defmodule LogApp.Logs do
     })
   end
 end
-

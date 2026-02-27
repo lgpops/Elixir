@@ -155,8 +155,7 @@ defmodule LogAppWeb.LogLive.Index do
       <%!-- Page Header --%>
       <.header>
         <span class="flex items-center gap-3">
-          Log Dashboard
-          <.connection_indicator connected={@connected} />
+          Log Dashboard <.connection_indicator connected={@connected} />
         </span>
         <:subtitle>
           Real-time log stream from ingress
@@ -328,8 +327,7 @@ defmodule LogAppWeb.LogLive.Index do
           <.icon name="hero-x-mark" class="size-4" />
         </button>
         <h3 class="font-bold text-lg flex items-center gap-2">
-          <span class={level_badge_class(@log.level)}>{@log.level}</span>
-          Log #{@log.id}
+          <span class={level_badge_class(@log.level)}>{@log.level}</span> Log #{@log.id}
         </h3>
         <div class="py-4 space-y-3">
           <div>

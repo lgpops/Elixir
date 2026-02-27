@@ -18,4 +18,3 @@ defmodule LogApp.Log do
     |> validate_inclusion(:level, ["debug", "info", "warning", "error"])
   end
 end
-
