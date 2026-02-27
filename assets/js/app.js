@@ -25,11 +25,26 @@ import {LiveSocket} from "phoenix_live_view"
 import {hooks as colocatedHooks} from "phoenix-colocated/log_app"
 import topbar from "../vendor/topbar"
 
+const Hooks = {
+  CopyToClipboard: {
+    mounted() {
+      this.el.addEventListener("click", () => {
+        const text = this.el.dataset.clipboardText
+        navigator.clipboard.writeText(text).then(() => {
+          const originalHTML = this.el.innerHTML
+          this.el.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Copied!'
+          setTimeout(() => { this.el.innerHTML = originalHTML }, 1500)
+        })
+      })
+    }
+  }
+}
+
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks},
+  hooks: {...colocatedHooks, ...Hooks},
 })
 
 // Show progress bar on live navigation and form submits
