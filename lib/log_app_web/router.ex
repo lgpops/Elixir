@@ -17,7 +17,7 @@ defmodule LogAppWeb.Router do
   scope "/", LogAppWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", LogLive.Index, :index
     live "/logs", LogLive.Index, :index
   end
 
