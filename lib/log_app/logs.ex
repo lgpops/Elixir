@@ -25,6 +25,34 @@ defmodule LogApp.Logs do
     |> Repo.insert()
   end
 
+  def count_logs_by_level do
+    from(l in Log,
+      group_by: l.level,
+      select: {l.level, count(l.id)}
+    )
+    |> Repo.all()
+    |> Map.new()
+    |> then(fn counts ->
+      %{
+        "error" => Map.get(counts, "error", 0),
+        "warning" => Map.get(counts, "warning", 0),
+        "info" => Map.get(counts, "info", 0),
+        "debug" => Map.get(counts, "debug", 0)
+      }
+    end)
+  end
+
+  def list_workflow_ids do
+    from(l in Log,
+      distinct: true,
+      select: l.workflow_id,
+      order_by: [desc: max(l.inserted_at)],
+      group_by: l.workflow_id,
+      limit: 100
+    )
+    |> Repo.all()
+  end
+
   def broadcast_log(log) do
     LogAppWeb.Endpoint.broadcast!("logs:updates", "log_created", %{
       id: log.id,
