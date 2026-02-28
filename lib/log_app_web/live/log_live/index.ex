@@ -274,19 +274,22 @@ defmodule LogAppWeb.LogLive.Index do
 
       <%!-- Workflow filter --%>
       <form phx-change="filter_workflow" class="inline">
-        <select
-          class="select select-sm select-bordered w-64"
+        <input
+          type="text"
+          class="input input-sm input-bordered w-64"
+          placeholder="Filter workflow (prefix/suffix)"
+          list="workflow-id-options"
           name="workflow_id"
-        >
-          <option value="">All Workflows</option>
+          value={@workflow_filter || ""}
+        />
+        <datalist id="workflow-id-options">
           <option
             :for={wf_id <- @workflow_ids}
             value={wf_id}
-            selected={@workflow_filter == to_string(wf_id)}
           >
-            {String.slice(to_string(wf_id), 0, 8)}...
+            {workflow_label(wf_id)}
           </option>
-        </select>
+        </datalist>
       </form>
 
       <%!-- Paused indicator --%>
@@ -362,7 +365,12 @@ defmodule LogAppWeb.LogLive.Index do
     workflow_match =
       case assigns.workflow_filter do
         nil -> true
-        wf_id -> to_string(log.workflow_id) == wf_id
+
+        wf_filter ->
+          log.workflow_id
+          |> to_string()
+          |> String.downcase()
+          |> String.contains?(String.downcase(wf_filter))
       end
 
     level_match and workflow_match
@@ -413,6 +421,16 @@ defmodule LogAppWeb.LogLive.Index do
   end
 
   defp format_message_preview(other), do: inspect(other)
+
+  defp workflow_label(workflow_id) do
+    id = to_string(workflow_id)
+
+    if String.length(id) > 13 do
+      "#{String.slice(id, 0, 8)}...#{String.slice(id, -4, 4)}"
+    else
+      id
+    end
+  end
 
   # Relative timestamps
   defp relative_time(nil), do: ""
