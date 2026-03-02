@@ -17,6 +17,21 @@ brew install flyctl
 flyctl auth login
 ```
 
+## 1.1) One-command deploy (recommended)
+
+You can run the helper script from this branch:
+
+```bash
+export DATABASE_URL="ecto://USER:PASS@HOST:5432/DB"
+./scripts/deploy_fly.sh
+```
+
+Optional overrides:
+
+```bash
+APP_NAME="log-app-lgpops" FLY_REGION="syd" PHX_HOST="log-app-lgpops.fly.dev" ./scripts/deploy_fly.sh
+```
+
 ## 2) Create app (first run only)
 
 ```bash
