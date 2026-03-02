@@ -8,6 +8,7 @@ primary_region = "syd"
   PHX_HOST = "log-app-lgpops.fly.dev"
   PHX_SERVER = "true"
   PORT = "4000"
+  ERL_AFLAGS = "-proto_dist inet6_tcp"
 
 [http_service]
   internal_port = 4000
