@@ -25,6 +25,23 @@ defmodule LogApp.Logs do
     |> Repo.insert()
   end
 
+  def delete_log(%Log{} = log) do
+    case Repo.delete(log) do
+      {:ok, deleted_log} = ok ->
+        broadcast_log_deleted(deleted_log)
+        ok
+
+      error ->
+        error
+    end
+  end
+
+  def delete_log(id) when is_integer(id) do
+    id
+    |> get_log!()
+    |> delete_log()
+  end
+
   def count_logs_by_level do
     from(l in Log,
       group_by: l.level,
@@ -59,6 +76,14 @@ defmodule LogApp.Logs do
       workflow_id: log.workflow_id,
       message: log.message,
       inserted_at: log.inserted_at
+    })
+  end
+
+  def broadcast_log_deleted(log) do
+    LogAppWeb.Endpoint.broadcast!("logs:updates", "log_deleted", %{
+      id: log.id,
+      level: log.level,
+      workflow_id: log.workflow_id
     })
   end
 end

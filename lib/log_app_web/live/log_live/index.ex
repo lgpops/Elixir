@@ -84,6 +84,41 @@ defmodule LogAppWeb.LogLive.Index do
     {:noreply, socket}
   end
 
+  def handle_info(%Phoenix.Socket.Broadcast{event: "log_deleted", payload: payload}, socket) do
+    deleted_id = Map.get(payload, :id) || Map.get(payload, "id")
+    deleted_level = Map.get(payload, :level) || Map.get(payload, "level")
+
+    logs = Enum.reject(socket.assigns.logs, &(&1.id == deleted_id))
+
+    stats =
+      if is_binary(deleted_level) do
+        Map.update(socket.assigns.stats, deleted_level, 0, &max(&1 - 1, 0))
+      else
+        socket.assigns.stats
+      end
+
+    workflow_ids =
+      logs
+      |> Enum.map(& &1.workflow_id)
+      |> Enum.uniq()
+
+    selected_log =
+      case socket.assigns.selected_log do
+        %{id: ^deleted_id} -> nil
+        current -> current
+      end
+
+    socket =
+      socket
+      |> assign(:logs, logs)
+      |> assign(:stats, stats)
+      |> assign(:workflow_ids, workflow_ids)
+      |> assign(:selected_log, selected_log)
+      |> reset_filtered_stream()
+
+    {:noreply, socket}
+  end
+
   def handle_info(_msg, socket), do: {:noreply, socket}
 
   def handle_event("set_levels", %{"levels" => selected_levels}, socket) do
