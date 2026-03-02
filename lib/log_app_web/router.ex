@@ -21,6 +21,12 @@ defmodule LogAppWeb.Router do
     live "/logs", LogLive.Index, :index
   end
 
+  scope "/", LogAppWeb do
+    pipe_through :api
+
+    post "/logs", IngressController, :create
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", LogAppWeb do
   #   pipe_through :api
