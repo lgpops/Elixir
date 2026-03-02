@@ -1,11 +1,11 @@
-app = "log-app"
+app = "log-app-lgpops"
 primary_region = "syd"
 
 [build]
   dockerfile = "Dockerfile"
 
 [env]
-  PHX_HOST = "log-app.fly.dev"
+  PHX_HOST = "log-app-lgpops.fly.dev"
   PHX_SERVER = "true"
   PORT = "4000"
 
