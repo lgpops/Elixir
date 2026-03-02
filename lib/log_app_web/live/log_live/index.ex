@@ -19,7 +19,8 @@ defmodule LogAppWeb.LogLive.Index do
     filtered_logs =
       logs
       |> Enum.filter(fn log ->
-        MapSet.member?(level_filters, log.level) and within_time_range?(log.inserted_at, time_range)
+        MapSet.member?(level_filters, log.level) and
+          within_time_range?(log.inserted_at, time_range)
       end)
 
     socket =
@@ -229,13 +230,17 @@ defmodule LogAppWeb.LogLive.Index do
                   <td class="w-44">
                     <span class={level_badge_class(log.level)}>{level_label(log.level)}</span>
                   </td>
-                  <td class="w-44 font-mono text-sm text-[#c4b5fd]">{format_time(log.inserted_at)}</td>
+                  <td class="w-44 font-mono text-sm text-[#c4b5fd]">
+                    {format_time(log.inserted_at)}
+                  </td>
                   <td class="w-52">
                     <code class="rounded bg-[#4c1d95]/60 px-2 py-1 font-mono text-sm text-[#a78bfa]">
                       {workflow_label(log.workflow_id)}
                     </code>
                   </td>
-                  <td class="font-mono text-sm text-gray-300">{format_message_preview(log.message)}</td>
+                  <td class="font-mono text-sm text-gray-300">
+                    {format_message_preview(log.message)}
+                  </td>
                 </tr>
 
                 <tr :if={@filtered_logs_count == 0}>
@@ -244,7 +249,9 @@ defmodule LogAppWeb.LogLive.Index do
                       <.icon name="hero-document-text" class="size-8 text-[#8b5cf6]" />
                     </div>
                     <h3 class="mt-4 text-lg font-medium text-white">No logs yet</h3>
-                    <p class="mt-2 text-sm text-[#a78bfa]">Logs will appear here in real-time as they are ingested.</p>
+                    <p class="mt-2 text-sm text-[#a78bfa]">
+                      Logs will appear here in real-time as they are ingested.
+                    </p>
                   </td>
                 </tr>
               </tbody>
@@ -289,8 +296,14 @@ defmodule LogAppWeb.LogLive.Index do
 
         <div class="flex items-center gap-6">
           <div class="flex items-center gap-2 rounded-lg border border-[#6d28d9]/40 bg-[#4c1d95]/60 px-4 py-2">
-            <span class={["size-2.5 rounded-full", if(@connected, do: "bg-green-400", else: "bg-red-400")]} />
-            <span class={["text-sm font-medium", if(@connected, do: "text-green-400", else: "text-red-400")]}>
+            <span class={[
+              "size-2.5 rounded-full",
+              if(@connected, do: "bg-green-400", else: "bg-red-400")
+            ]} />
+            <span class={[
+              "text-sm font-medium",
+              if(@connected, do: "text-green-400", else: "text-red-400")
+            ]}>
               {if @connected, do: "Live", else: "Offline"}
             </span>
             <span class="ml-2 text-xs text-[#a78bfa]">{@last_update}</span>
@@ -320,16 +333,44 @@ defmodule LogAppWeb.LogLive.Index do
     <div class="border-b border-[#5b21b6]/50 bg-[#4c1d95]/50 px-6 py-3">
       <div class="flex items-center gap-6">
         <div class="flex items-center gap-4">
-          <.metric_chip label="Error" value={Map.get(@stats, "error", 0)} dot_class="bg-red-500" value_class="text-red-400" />
-          <.metric_chip label="Warn" value={Map.get(@stats, "warning", 0)} dot_class="bg-yellow-500" value_class="text-yellow-400" />
-          <.metric_chip label="Info" value={Map.get(@stats, "info", 0)} dot_class="bg-blue-500" value_class="text-blue-400" />
-          <.metric_chip label="Debug" value={Map.get(@stats, "debug", 0)} dot_class="bg-gray-500" value_class="text-gray-400" />
+          <.metric_chip
+            label="Error"
+            value={Map.get(@stats, "error", 0)}
+            dot_class="bg-red-500"
+            value_class="text-red-400"
+          />
+          <.metric_chip
+            label="Warn"
+            value={Map.get(@stats, "warning", 0)}
+            dot_class="bg-yellow-500"
+            value_class="text-yellow-400"
+          />
+          <.metric_chip
+            label="Info"
+            value={Map.get(@stats, "info", 0)}
+            dot_class="bg-blue-500"
+            value_class="text-blue-400"
+          />
+          <.metric_chip
+            label="Debug"
+            value={Map.get(@stats, "debug", 0)}
+            dot_class="bg-gray-500"
+            value_class="text-gray-400"
+          />
         </div>
         <span class="h-6 w-px bg-[#6d28d9]" />
         <div class="flex items-center gap-4 text-sm">
-          <span class="text-[#a78bfa]">Total: <span class="ml-1 font-mono font-semibold text-white">{@total_logs}</span></span>
-          <span class="text-[#a78bfa]">Rate: <span class="ml-1 font-mono font-semibold text-[#c4b5fd]">{@rate_per_second}/s</span></span>
-          <span class="text-[#a78bfa]">Workflows: <span class="ml-1 font-mono font-semibold text-[#c4b5fd]">{@workflow_count}</span></span>
+          <span class="text-[#a78bfa]">
+            Total: <span class="ml-1 font-mono font-semibold text-white">{@total_logs}</span>
+          </span>
+          <span class="text-[#a78bfa]">
+            Rate:
+            <span class="ml-1 font-mono font-semibold text-[#c4b5fd]">{@rate_per_second}/s</span>
+          </span>
+          <span class="text-[#a78bfa]">
+            Workflows:
+            <span class="ml-1 font-mono font-semibold text-[#c4b5fd]">{@workflow_count}</span>
+          </span>
         </div>
       </div>
     </div>
@@ -361,7 +402,9 @@ defmodule LogAppWeb.LogLive.Index do
     ~H"""
     <aside class="w-72 shrink-0 space-y-4 overflow-y-auto border-r border-[#5b21b6]/50 bg-[#4c1d95]/30 p-4">
       <section>
-        <label class="mb-2 block text-xs font-medium uppercase tracking-wider text-[#a78bfa]">Search</label>
+        <label class="mb-2 block text-xs font-medium uppercase tracking-wider text-[#a78bfa]">
+          Search
+        </label>
         <form phx-change="filter_search" class="relative">
           <input
             type="text"
@@ -370,14 +413,22 @@ defmodule LogAppWeb.LogLive.Index do
             placeholder="Search messages..."
             class="input w-full border-[#6d28d9]/50 bg-[#4c1d95]/50 pr-10 text-white placeholder:text-[#8b5cf6] focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]"
           />
-          <.icon name="hero-magnifying-glass" class="pointer-events-none absolute right-3 top-1/2 size-5 -translate-y-1/2 text-[#8b5cf6]" />
+          <.icon
+            name="hero-magnifying-glass"
+            class="pointer-events-none absolute right-3 top-1/2 size-5 -translate-y-1/2 text-[#8b5cf6]"
+          />
         </form>
       </section>
 
       <section>
-        <label class="mb-2 block text-xs font-medium uppercase tracking-wider text-[#a78bfa]">Log Level</label>
+        <label class="mb-2 block text-xs font-medium uppercase tracking-wider text-[#a78bfa]">
+          Log Level
+        </label>
         <form phx-change="set_levels" class="space-y-2">
-          <label :for={level <- ["error", "warning", "info", "debug"]} class="group flex cursor-pointer items-center gap-3">
+          <label
+            :for={level <- ["error", "warning", "info", "debug"]}
+            class="group flex cursor-pointer items-center gap-3"
+          >
             <input
               type="checkbox"
               name="levels[]"
@@ -394,7 +445,9 @@ defmodule LogAppWeb.LogLive.Index do
       </section>
 
       <section>
-        <label class="mb-2 block text-xs font-medium uppercase tracking-wider text-[#a78bfa]">Workflow ID</label>
+        <label class="mb-2 block text-xs font-medium uppercase tracking-wider text-[#a78bfa]">
+          Workflow ID
+        </label>
         <form phx-change="filter_workflow">
           <select
             name="workflow_id"
@@ -413,10 +466,14 @@ defmodule LogAppWeb.LogLive.Index do
       </section>
 
       <section>
-        <label class="mb-2 block text-xs font-medium uppercase tracking-wider text-[#a78bfa]">Time Range</label>
+        <label class="mb-2 block text-xs font-medium uppercase tracking-wider text-[#a78bfa]">
+          Time Range
+        </label>
         <div class="grid grid-cols-2 gap-2">
           <button
-            :for={{label, value} <- [{"5 min", "5m"}, {"15 min", "15m"}, {"1 hour", "1h"}, {"All", "all"}]}
+            :for={
+              {label, value} <- [{"5 min", "5m"}, {"15 min", "15m"}, {"1 hour", "1h"}, {"All", "all"}]
+            }
             type="button"
             phx-click="set_time_range"
             phx-value-range={value}
@@ -439,8 +496,7 @@ defmodule LogAppWeb.LogLive.Index do
           phx-click="clear_display"
           class="flex w-full items-center justify-center gap-2 rounded-lg bg-red-500/10 px-4 py-2.5 text-sm text-red-400 transition-colors hover:bg-red-500/20"
         >
-          <.icon name="hero-trash" class="size-4" />
-          Clear Display
+          <.icon name="hero-trash" class="size-4" /> Clear Display
         </button>
       </section>
     </aside>
@@ -463,23 +519,33 @@ defmodule LogAppWeb.LogLive.Index do
         <div class="space-y-4">
           <div>
             <label class="text-xs font-medium uppercase tracking-wider text-[#a78bfa]">Level</label>
-            <div class="mt-1"><span class={level_badge_class(@log.level)}>{level_label(@log.level)}</span></div>
-          </div>
-
-          <div>
-            <label class="text-xs font-medium uppercase tracking-wider text-[#a78bfa]">Timestamp</label>
-            <div class="mt-1 font-mono text-sm text-white">{@log.inserted_at}</div>
-          </div>
-
-          <div>
-            <label class="text-xs font-medium uppercase tracking-wider text-[#a78bfa]">Workflow ID</label>
             <div class="mt-1">
-              <code class="break-all rounded bg-[#2e1065]/60 px-2 py-1 font-mono text-sm text-[#c4b5fd]">{@log.workflow_id}</code>
+              <span class={level_badge_class(@log.level)}>{level_label(@log.level)}</span>
             </div>
           </div>
 
           <div>
-            <label class="text-xs font-medium uppercase tracking-wider text-[#a78bfa]">Message (JSONB)</label>
+            <label class="text-xs font-medium uppercase tracking-wider text-[#a78bfa]">
+              Timestamp
+            </label>
+            <div class="mt-1 font-mono text-sm text-white">{@log.inserted_at}</div>
+          </div>
+
+          <div>
+            <label class="text-xs font-medium uppercase tracking-wider text-[#a78bfa]">
+              Workflow ID
+            </label>
+            <div class="mt-1">
+              <code class="break-all rounded bg-[#2e1065]/60 px-2 py-1 font-mono text-sm text-[#c4b5fd]">
+                {@log.workflow_id}
+              </code>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs font-medium uppercase tracking-wider text-[#a78bfa]">
+              Message (JSONB)
+            </label>
             <pre class="mt-1 overflow-x-auto rounded-lg bg-[#2e1065] p-4 font-mono text-xs leading-relaxed text-gray-200"><code>{format_message(@log.message)}</code></pre>
           </div>
         </div>
@@ -493,7 +559,8 @@ defmodule LogAppWeb.LogLive.Index do
 
     workflow_match =
       case assigns.workflow_filter do
-        nil -> true
+        nil ->
+          true
 
         workflow_filter ->
           log.workflow_id
@@ -504,7 +571,8 @@ defmodule LogAppWeb.LogLive.Index do
 
     search_match =
       case String.trim(assigns.search_query || "") do
-        "" -> true
+        "" ->
+          true
 
         search_query ->
           log.message
@@ -529,7 +597,10 @@ defmodule LogAppWeb.LogLive.Index do
   end
 
   defp level_badge_class("error"), do: "badge border-red-500/30 bg-red-500/20 text-red-400"
-  defp level_badge_class("warning"), do: "badge border-yellow-500/30 bg-yellow-500/20 text-yellow-400"
+
+  defp level_badge_class("warning"),
+    do: "badge border-yellow-500/30 bg-yellow-500/20 text-yellow-400"
+
   defp level_badge_class("info"), do: "badge border-blue-500/30 bg-blue-500/20 text-blue-400"
   defp level_badge_class("debug"), do: "badge border-gray-500/30 bg-gray-500/20 text-gray-400"
   defp level_badge_class(_), do: "badge border-blue-500/30 bg-blue-500/20 text-blue-400"
@@ -653,7 +724,8 @@ defmodule LogAppWeb.LogLive.Index do
     timestamp_with_z = if String.ends_with?(timestamp, "Z"), do: timestamp, else: timestamp <> "Z"
 
     case DateTime.from_iso8601(timestamp_with_z) do
-      {:ok, datetime, _offset} -> datetime
+      {:ok, datetime, _offset} ->
+        datetime
 
       _ ->
         case NaiveDateTime.from_iso8601(timestamp) do
