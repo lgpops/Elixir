@@ -41,17 +41,23 @@ defmodule LogAppWeb.LogLive.Index do
     {:ok, socket}
   end
 
-  def handle_info(%{"event" => "log_created", "payload" => payload}, socket) do
+  def handle_info(%Phoenix.Socket.Broadcast{event: "log_created", payload: payload}, socket) do
+    id = Map.get(payload, :id) || Map.get(payload, "id")
+    level = Map.get(payload, :level) || Map.get(payload, "level")
+    workflow_id = Map.get(payload, :workflow_id) || Map.get(payload, "workflow_id")
+    message = Map.get(payload, :message) || Map.get(payload, "message")
+    inserted_at = Map.get(payload, :inserted_at) || Map.get(payload, "inserted_at")
+
     new_log = %{
-      id: payload["id"],
-      level: payload["level"],
-      workflow_id: payload["workflow_id"],
-      message: payload["message"],
-      inserted_at: payload["inserted_at"]
+      id: id,
+      level: level,
+      workflow_id: workflow_id,
+      message: message,
+      inserted_at: inserted_at
     }
 
     logs = Enum.take([new_log | socket.assigns.logs], 1000)
-    stats = Map.update!(socket.assigns.stats, new_log.level, &(&1 + 1))
+    stats = Map.update(socket.assigns.stats, new_log.level, 1, &(&1 + 1))
 
     workflow_ids =
       if new_log.workflow_id in socket.assigns.workflow_ids do
