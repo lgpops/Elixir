@@ -3,7 +3,7 @@ import Config
 # Configure your database
 config :log_app, LogApp.Repo,
   username: "rblren",
-  password: "",
+  password: "log_app_dev",
   hostname: "localhost",
   database: "log_app_dev",
   stacktrace: true,
