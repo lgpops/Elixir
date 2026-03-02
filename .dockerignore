@@ -1,0 +1,9 @@
+_build
+assets/node_modules
+deps
+.git
+.gitignore
+.DS_Store
+*.md
+log_app
+clients
