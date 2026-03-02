@@ -8,6 +8,7 @@ defmodule LogAppWeb.LogLive.Index do
 
     if connected do
       LogAppWeb.Endpoint.subscribe("logs:updates")
+      :timer.send_interval(3_000, self(), :reconcile_logs)
     end
 
     logs = Logs.list_logs()
@@ -117,6 +118,33 @@ defmodule LogAppWeb.LogLive.Index do
       |> reset_filtered_stream()
 
     {:noreply, socket}
+  end
+
+  def handle_info(:reconcile_logs, socket) do
+    latest_logs = Logs.list_logs()
+
+    if same_log_snapshot?(socket.assigns.logs, latest_logs) do
+      {:noreply, socket}
+    else
+      stats = Logs.count_logs_by_level()
+      workflow_ids = Logs.list_workflow_ids()
+
+      selected_log =
+        case socket.assigns.selected_log do
+          %{id: id} -> Enum.find(latest_logs, &(&1.id == id))
+          _ -> nil
+        end
+
+      socket =
+        socket
+        |> assign(:logs, latest_logs)
+        |> assign(:stats, stats)
+        |> assign(:workflow_ids, workflow_ids)
+        |> assign(:selected_log, selected_log)
+        |> reset_filtered_stream()
+
+      {:noreply, socket}
+    end
   end
 
   def handle_info(_msg, socket), do: {:noreply, socket}
@@ -767,4 +795,8 @@ defmodule LogAppWeb.LogLive.Index do
   end
 
   defp to_utc_datetime(_), do: nil
+
+  defp same_log_snapshot?(old_logs, new_logs) do
+    Enum.map(old_logs, & &1.id) == Enum.map(new_logs, & &1.id)
+  end
 end
