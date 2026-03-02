@@ -19,7 +19,7 @@ echo "Using app: ${APP_NAME}"
 echo "Using region: ${FLY_REGION}"
 echo "Using host: ${PHX_HOST}"
 
-if ! flyctl apps list --json | grep -q "\"Name\":\"${APP_NAME}\""; then
+if ! flyctl apps list | awk '{print $1}' | grep -Fxq "${APP_NAME}"; then
   echo "Creating Fly app ${APP_NAME}..."
   flyctl apps create "${APP_NAME}"
 else
@@ -45,7 +45,7 @@ flyctl secrets set \
   --app "${APP_NAME}"
 
 echo "Deploying release..."
-flyctl deploy --remote-only --app "${APP_NAME}" --region "${FLY_REGION}"
+flyctl deploy --remote-only --app "${APP_NAME}" --primary-region "${FLY_REGION}"
 
 echo "Running DB migrations..."
 flyctl ssh console -C "/app/bin/log_app eval 'LogApp.Release.migrate'" --app "${APP_NAME}"
