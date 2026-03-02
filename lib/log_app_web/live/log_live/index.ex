@@ -315,16 +315,6 @@ defmodule LogAppWeb.LogLive.Index do
             <span class="ml-2 text-xs text-[#a78bfa]">{@last_update}</span>
           </div>
 
-          <div class="flex items-center gap-2 text-sm">
-            <span class="text-[#a78bfa]">Phoenix PubSub</span>
-            <span class={[
-              "rounded px-2 py-0.5 text-xs font-medium",
-              if(@connected, do: "bg-green-500/20 text-green-400", else: "bg-red-500/20 text-red-400")
-            ]}>
-              {if @connected, do: "Connected", else: "Disconnected"}
-            </span>
-          </div>
-
           <button
             class="btn btn-sm border-[#6d28d9]/40 bg-[#4c1d95]/70 text-[#e9d5ff] hover:bg-[#5b21b6]"
             phx-click="toggle_pause"
